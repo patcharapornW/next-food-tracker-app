@@ -21,7 +21,7 @@ const MOCK_FOOD_DATA: FoodItem[] = [
   // ... เพิ่มข้อมูลอื่นๆ ตามต้องการ
 ];
 
-export default function EditFoodPage() {
+export default function Page() {
   const router = useRouter();
   const params = useParams();
   const foodId = params.id as string;
