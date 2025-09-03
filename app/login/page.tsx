@@ -4,22 +4,42 @@ import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { FaEye, FaEyeSlash } from 'react-icons/fa'; // นำเข้าไอคอนสำหรับปุ่มดูรหัสผ่าน
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-    router.push('/dashboard'); // Redirect to dashboard after login
-    // Logic for user login, e.g., API call
+    setError(''); // ล้างข้อความผิดพลาดเก่า
+    setLoading(true);
 
-    console.log('Logging in with:', { email, password });
+    try {
+      // **ส่วนนี้คือการจำลองการเรียก API จริง:**
+      // ในแอปจริง คุณจะเปลี่ยนโค้ดส่วนนี้เป็นการเรียก API ไปยังเซิร์ฟเวอร์
+      // เช่น:
+      // const response = await fetch('/api/login', { ... });
+      
+      // **ตัวอย่างการล็อกอินแบบ Mock (จำลอง):**
+      await new Promise(resolve => setTimeout(resolve, 1500)); // จำลองการหน่วงเวลาของเครือข่าย
+      if (email === 'test@example.com' && password === 'password123') {
+        localStorage.setItem('isLoggedIn', 'true'); // จำลองการบันทึกสถานะการล็อกอิน
+        router.push('/dashboard'); // นำทางไปยัง Dashboard เมื่อล็อกอินสำเร็จ
+      } else {
+        throw new Error('อีเมลหรือรหัสผ่านไม่ถูกต้อง');
+      }
+
+    } catch (err: any) {
+      setError(err.message); // แสดงข้อความผิดพลาดจากเซิร์ฟเวอร์
+    } finally {
+      setLoading(false); // หยุดสถานะการโหลด
+    }
   };
-
-  
 
   return (
     <>
@@ -52,22 +72,36 @@ export default function Login() {
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 รหัสผ่าน
               </label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500"
-              />
+              <div className="relative mt-1">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  name="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 text-gray-500"
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
             </div>
+
+            {error && (
+              <p className="text-red-500 text-sm text-center">{error}</p>
+            )}
 
             <button
               type="submit"
-              className="w-full bg-pink-500 text-white font-bold py-3 px-4 rounded-full shadow-lg hover:bg-pink-600 transition-colors duration-300"
+              disabled={loading}
+              className="w-full bg-pink-500 text-white font-bold py-3 px-4 rounded-full shadow-lg hover:bg-pink-600 transition-colors duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
-              Login
+              {loading ? 'กำลังเข้าสู่ระบบ...' : 'Login'}
             </button>
           </form>
 
