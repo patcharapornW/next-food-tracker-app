@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Prompt } from "next/font/google";
+import { Prompt as Prompt } from "next/font/google";
 import "./globals.css";
 
 const prompt= Prompt({
@@ -30,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${prompt.className} antialiased`}
+        className={`${prompt.className}`}
       >
         {children}
       </body>
